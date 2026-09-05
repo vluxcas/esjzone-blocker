@@ -1,0 +1,53 @@
+name: 发布用户脚本
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出源码
+        uses: actions/checkout@v6
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 校验发布标签
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          package_version="$(node -p "require('./package.json').version")"
+          expected_tag="v${package_version}"
+          if [ "$RELEASE_TAG" != "$expected_tag" ]; then
+            echo "发布标签 $RELEASE_TAG 与 package.json 版本 $package_version 不一致" >&2
+            exit 1
+          fi
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 运行测试
+        run: npm test
+
+      - name: 构建用户脚本
+        run: npm run build
+
+      - name: 创建 Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: >-
+          gh release create "$RELEASE_TAG"
+          dist/esjzone-blocker.user.js
+          --verify-tag
+          --generate-notes
+          --title "$RELEASE_TAG"

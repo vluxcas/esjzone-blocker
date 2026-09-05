@@ -1,0 +1,26 @@
+{
+  "name": "esjzone-blocker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "author": "vluxcas",
+  "homepage": "https://github.com/vluxcas/esjzone-blocker",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vluxcas/esjzone-blocker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vluxcas/esjzone-blocker/issues"
+  },
+  "scripts": {
+    "build": "vite build && node scripts/check-build.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "jsdom": "29.1.1",
+    "vite": "8.1.4",
+    "vite-plugin-monkey": "8.0.6",
+    "vitest": "4.1.10"
+  }
+}
